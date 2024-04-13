@@ -2,10 +2,6 @@
 
 configure()
 {
-  echo "Deseja utilizar o homebrew para instalar os pacotes? (S/n)"
-
-  read enable_homebrew;
-
   URL_GOOGLE_CHROME="https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
   URL_FISH_SHELL="https://download.opensuse.org/repositories/shells:/fish:/release:/3/Debian_12/amd64/fish_3.7.1-1_amd64.deb"
   URL_VS_CODE="https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64"
@@ -13,9 +9,6 @@ configure()
 
   URL_FISH_CONFIG="https://gist.githubusercontent.com/gustavojuneo/93a5439c59441bc4676664bd4c964128/raw/038dc956f565b752e29a16914310f5bddf8003c0/config.fish"
 
-  URL_SWEET_THEME="https://github.com/EliverLara/Sweet/releases/download/v4.0/Sweet-Dark-v40.zip"
-  URL_DRACULA_THEME="https://github.com/dracula/gtk/releases/download/v4.0.0/Dracula.tar.xz"
-  URL_FLATERY_ICONS="https://github.com/cbrnix/Flatery.git"
   URL_MCMOJAVE_CURSORS="https://github.com/vinceliuice/McMojave-cursors.git"
   URL_JETBRAINS_MONO="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.0/JetBrainsMono.zip"
 
@@ -64,7 +57,7 @@ configure()
   # Instalar programas no apt
   for nome_do_programa in ${PROGRAMAS_PARA_INSTALAR[@]}; do
     if ! dpkg -l | grep -q $nome_do_programa; then # Só instala se já não estiver instalado
-      apt install "$nome_do_programa" -y
+      sudo apt install "$nome_do_programa" -y
     else
       echo "[INSTALADO] - $nome_do_programa"
     fi
@@ -77,26 +70,20 @@ configure()
 
   chsh -s /usr/bin/fish
 
-  Instalando Linux Homebrew
-  if [ $enable_homebrew="S" ] || [ $enable_homebrew="s" ] || [ $enable_homebrew="" ]
-  then
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  fi
+  ## Instalando Homebrew
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
   ## Instalando pacotes Snap  ##
   sudo snap install spotify
   sudo snap install obsidian --classic
 
   # Instalando pacotes Homebrew
-  brew install docker
   brew install gh
   brew install go
   brew install starship
   brew install n
 
   ## Download customizações gnome
-  THEMES_FOLDER="$HOME/.themes"
-  ICONS_FOLDER="$HOME/.icons"
   FONTS_FOLDER="$HOME/.fonts"
   TMP_FOLDER="$HOME/Downloads/tmp"
   mkdir -p ${THEMES_FOLDER}
@@ -105,24 +92,18 @@ configure()
 
   cd ${TMP_FOLDER}
 
-  git clone ${URL_FLATERY_ICONS}
-  mv Flatery/Flatery ${ICONS_FOLDER}
+  git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git --depth=1
+  cd ./WhiteSur-gtk-theme
+  ./install.sh -t purple -N glassy -HD -l
 
-  wget -c ${URL_DRACULA_THEME}
-  tar -xf Dracula.tar.xz
-  mv Dracula ${THEMES_FOLDER}
-
-  wget -c ${URL_SWEET_THEME}
-  unzip Sweet-Dark-v40.zip
-  mv Sweet-Dark ${THEMES_FOLDER}
-
+  cd ..
   git clone ${URL_MCMOJAVE_CURSORS}
   cd McMojave-cursors
   mv dist McMojave-cursors
   mv McMojave-cursors ${ICONS_FOLDER}
 
   wget -c ${URL_JETBRAINS_MONO}
-  unzip -d JetBrainsMono.zip JetBrainsMono
+  unzip JetBrainsMono.zip -d JetBrainsMono
   mv JetBrainsMono ${FONTS_FOLDER}
 
   fc-cache -fv
@@ -134,6 +115,13 @@ configure()
   mkdir -p ${HOME}/www
   mkdir -p ${HOME}/www/projects
   mkdir -p ${HOME}/www/studies
+
+  ## Configurando Git Aliases
+  git config --global alias.s "status"
+  git config --global alias.cm "!git add . && git commit -m"
+  git config --global alias.cma "commit --amend"
+  git config --global alias.co "checkout"
+  git config --global alias.cb "checkout -b"
 
   # ----------------------------- PÓS-INSTALAÇÃO ----------------------------- #
   ## Finalização, atualização e limpeza##

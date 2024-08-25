@@ -73,9 +73,14 @@ configure()
   ## Instalando Homebrew
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-  ## Instalando pacotes Snap  ##
-  sudo snap install spotify
-  sudo snap install obsidian --classic
+  ## Instalando pacotes Flatpak  ##
+  flatpak install flathub md.obsidian.Obsidian -y -u
+  flatpak install flathub com.getpostman.Postman -y -u
+  flatpak install flathub it.mijorus.gearlever -y -u
+  flatpak install flathub io.dbeaver.DBeaverCommunity -y -u
+  flatpak install flathub com.spotify.Client -y -u
+  flatpak install flathub com.discordapp.Discord -y -u
+  
 
   # Instalando pacotes Homebrew
   brew install gh
